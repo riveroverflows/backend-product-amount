@@ -62,4 +62,21 @@ class ProductServiceTest {
         AntigravityApplicationException e = Assertions.assertThrows(AntigravityApplicationException.class, () -> productService.getProductAmount(productInfoRequest));
         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.PRICE_OUT_OF_RANGE);
     }
+
+    @DisplayName("상품 가격 계산")
+    @Test
+    void calculate() {
+        // given
+        ProductInfoRequest request = ProductInfoRequestFixture.get(2);
+        Product product = ProductFixture.get(1, 215000);
+        List<Promotion> promotions = PromotionFixture.select(2);
+        List<PromotionProducts> promotionProducts = PromotionProductsFixture.select(2);
+        // when
+        when(productRepository.getProduct(product.getId())).thenReturn(Optional.of(product));
+        when(promotionRepository.selectPromotions(AntigravityUtils.arrayToList(request.getCouponIds()))).thenReturn(promotions);
+        when(promotionRepository.selectPromotionProducts(product.getId(), AntigravityUtils.arrayToList(request.getCouponIds()))).thenReturn(promotionProducts);
+        // then
+        ProductAmountResponse productAmount = productService.getProductAmount(request);
+        assertThat(productAmount.getFinalPrice()).isEqualTo(182_000);
+    }
 }
