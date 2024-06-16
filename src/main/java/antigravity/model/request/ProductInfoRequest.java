@@ -8,4 +8,8 @@ import lombok.Data;
 public class ProductInfoRequest {
     private int productId;
     private int[] couponIds;
+
+    public boolean isCouponIdsLengthEqual(int length) {
+        return couponIds.length == length;
+    }
 }

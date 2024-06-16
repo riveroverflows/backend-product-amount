@@ -1,10 +1,12 @@
 package antigravity.domain.entity;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@ToString
 @Builder
+@Getter
 public class PromotionProducts {
     private int id;
     private int promotionId;
