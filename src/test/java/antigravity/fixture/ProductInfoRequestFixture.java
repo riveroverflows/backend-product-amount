@@ -3,10 +3,10 @@ package antigravity.fixture;
 import antigravity.model.request.ProductInfoRequest;
 
 public class ProductInfoRequestFixture {
-    public static ProductInfoRequest get() {
+    public static ProductInfoRequest get(int... couponIds) {
         return ProductInfoRequest.builder()
                 .productId(1)
-                .couponIds(new int[]{1, 2})
+                .couponIds(couponIds)
                 .build();
     }
 }
