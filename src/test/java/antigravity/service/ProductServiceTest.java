@@ -67,16 +67,16 @@ class ProductServiceTest {
     @Test
     void calculate() {
         // given
-        ProductInfoRequest request = ProductInfoRequestFixture.get(2);
+        ProductInfoRequest request = ProductInfoRequestFixture.get(1, 2);
         Product product = ProductFixture.get(1, 215000);
-        List<Promotion> promotions = PromotionFixture.select(2);
-        List<PromotionProducts> promotionProducts = PromotionProductsFixture.select(2);
+        List<Promotion> promotions = PromotionFixture.select(1, 2);
+        List<PromotionProducts> promotionProducts = PromotionProductsFixture.select(1, 2);
         // when
         when(productRepository.getProduct(product.getId())).thenReturn(Optional.of(product));
         when(promotionRepository.selectPromotions(AntigravityUtils.arrayToList(request.getCouponIds()))).thenReturn(promotions);
         when(promotionRepository.selectPromotionProducts(product.getId(), AntigravityUtils.arrayToList(request.getCouponIds()))).thenReturn(promotionProducts);
         // then
         ProductAmountResponse productAmount = productService.getProductAmount(request);
-        assertThat(productAmount.getFinalPrice()).isEqualTo(182_000);
+        assertThat(productAmount.getFinalPrice()).isEqualTo(157_000);
     }
 }
