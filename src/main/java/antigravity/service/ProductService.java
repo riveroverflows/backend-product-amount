@@ -25,10 +25,31 @@ public class ProductService {
 
     public ProductAmountResponse getProductAmount(ProductInfoRequest request) {
         ProductAmountDto amountDto = validateAndReturnDto(request);
+        return calculate(amountDto);
+    }
 
-        repository.getProduct(request.getProductId()).orElseThrow(() -> new AntigravityApplicationException(ErrorCode.PRODUCT_NOT_FOUND, String.format("Product Id %d not found.", request.getProductId())));
+    private ProductAmountResponse calculate(ProductAmountDto amountDto) {
+        Product product = amountDto.getProduct();
+        double amount = product.getPrice();
+        for (Promotion promotion : amountDto.getPromotions()) {
+            PromotionCalculator promotionCalculator = new PromotionCalculator(promotion);
+            amount = promotionCalculator.calculate(amount);
+        }
+        int calculated = trimToThousandAndCorrectNegative(amount);
+        return ProductAmountResponse.builder()
+                .name(product.getName())
+                .originPrice(product.getPrice())
+                .discountPrice(product.getPrice() - calculated)
+                .finalPrice(calculated)
+                .build();
+    }
 
-        return null;
+    private static int trimToThousandAndCorrectNegative(double amount) {
+        if (amount < 0) {
+            return 0;
+        }
+        return (int) (Math.floor(amount / 1000) * 1000);
+    }
 
     private ProductAmountDto validateAndReturnDto(ProductInfoRequest request) {
         Product product = productRepository.getProduct(request.getProductId())
