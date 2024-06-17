@@ -52,6 +52,11 @@ public class ProductService {
     }
 
     private ProductAmountDto validateAndReturnDto(ProductInfoRequest request) {
+        if (request == null) {
+            throw new AntigravityApplicationException(ErrorCode.BAD_REQUEST, "request is null");
+        }
+        request.validate();
+
         Product product = productRepository.getProduct(request.getProductId())
                 .orElseThrow(() -> new AntigravityApplicationException(ErrorCode.PRODUCT_NOT_FOUND, "request info: " + request));
         product.validatePrice();
